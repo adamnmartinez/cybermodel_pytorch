@@ -6,8 +6,7 @@ import os
 import neural
 
 LEARNING_RATE = 1e-2
-SURICATA_LOGS = "/var/log/suricata/eve.json"
-TRAINING_LOGS = "training_events.json"
+TRAINING_LOGS = "training/training_events.json"
 
 def trainModel(model, optimizer, epochs, training_input, training_output):
 	for _ in range(epochs):
@@ -63,6 +62,3 @@ if __name__ == "__main__":
 	print("Starting Training")
 	trainModel(model, optimizer, epochs, X, Y)
 	print("Training Complete")
-
-	# TRAINING COMPLETE
-

@@ -1,9 +1,10 @@
 import json
 import environment
+import suricata
 
-TRAINING_LOGS = "training_events.json"
+TRAINING_LOGS = "training/training_events.json"
 PRIVATE_IPS = environment.known_ips
-SURICATA_EVENTS = environment.suricata_event_types
+SURICATA_EVENTS = suricata.suricata_event_types
 
 def logs_to_data(log_path):
     file = open(log_path, "r")
@@ -11,6 +12,9 @@ def logs_to_data(log_path):
     data = []
 
     for line_number, line in enumerate(file, start=1):
+        if not line.startswith("{"):
+            continue
+
         try:
             json_line = json.loads(line)
 
@@ -51,13 +55,14 @@ def logs_to_data(log_path):
             entry = {
                 "features": features,
                 "flow_id": json_line.get("flow_id", None) if json_line.get("flow_id", None) else 0,
+                "traffic": str(json_line),
                 "label": json_line.get("label") if json_line.get("label") is not None else -1
             }
 
             data.append(entry)
 
         except ValueError:
-            print(f"ValueError Exception at line {line_number}")
+            print(f"ValueError Exception at line {line_number} (unrecognized event type?)")
         except KeyError as ke:
             print(f"KeyError Exception at line {line_number}")
             print(ke)
